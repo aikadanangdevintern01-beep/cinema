@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng ký thành công - CinemaGo</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#a413ec",
+            "background-light": "#f7f6f8",
+            "background-dark": "#1c1022",
+          },
+          fontFamily: {
+            display: ["Be Vietnam Pro", "sans-serif"]
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="bg-background-dark text-gray-200 font-display min-h-screen flex flex-col">
+
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 px-6 py-3 bg-background-dark/80 backdrop-blur-sm">
+  <a href="/" class="flex items-center gap-2 text-white">
+    <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 48 48">
+      <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"/>
+    </svg>
+    <h2 class="text-xl font-bold tracking-tight">CinemaGo</h2>
+  </a>
+
+  <div class="flex items-center gap-2">
+    <a href="/login" class="px-4 h-10 rounded-lg bg-[#3c2348] hover:bg-[#4a3953] transition-colors">
+      Đăng nhập
+    </a>
+  </div>
+</header>
+
+<main class="flex-grow flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-lg bg-[#2a1833] p-10 rounded-xl shadow-lg border border-white/10 text-center">
+
+    <h1 class="text-3xl font-bold mb-4">Đăng ký thành công!</h1>
+    <p class="text-gray-300 mb-6">
+      Tài khoản của bạn đã được tạo thành công.
+      Hãy đăng nhập để bắt đầu trải nghiệm CinemaGo.
+    </p>
+
+    <a href="/login"
+       class="block w-full py-3 rounded-lg bg-primary hover:bg-primary/90 font-semibold transition-all">
+      Đăng nhập ngay
+    </a>
+
+    <a href="/" class="mt-4 block text-primary hover:text-primary/80 transition-colors">
+      ← Quay lại trang chủ
+    </a>
+  </div>
+</main>
+
+</body>
+</html>

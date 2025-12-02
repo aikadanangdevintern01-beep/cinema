@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý nhân viên - Rạp chiếu ABC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 260px;
+            background: #343a40;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px 15px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: #495057;
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .header-fixed {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 25px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .btn-add {
+            background: #0d6efd;
+            border: none;
+        }
+
+        .table th {
+            background: #f1f3f5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar text-white">
+        <div class="text-center mb-4">
+            <h4 class="mb-0">Rạp chiếu ABC</h4>
+            <small>Quản trị hệ thống</small>
+        </div>
+        <nav class="nav flex-column">
+            <a th:href="@{/admin/dashboard}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/staffs}" class="nav-link active">
+                <i class="bi bi-people"></i> Nhân viên
+            </a>
+            <!-- Thêm menu khác sau -->
+        </nav>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="header-fixed d-flex justify-content-between align-items-center">
+            <h1 class="page-title">Quản lý nhân viên</h1>
+            <div class="d-flex align-items-center gap-3">
+                <span th:text="${#authentication?.name}">Admin</span>
+                <div class="badge bg-danger rounded-pill">AD</div>
+            </div>
+        </div>
+
+        <div th:replace="${content}"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

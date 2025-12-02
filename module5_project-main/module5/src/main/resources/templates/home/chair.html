@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chọn Ghế - CinemaGo</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet"/>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a413ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#1c1022",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+        /* Hiệu ứng màn hình cong */
+        .screen-curved {
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+            box-shadow: 0 20px 50px rgba(255,255,255,0.1);
+            clip-path: polygon(5% 0, 95% 0, 100% 100%, 0% 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative w-full">
+
+    <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 py-3 bg-background-dark/80 backdrop-blur-sm">
+        <div class="flex items-center gap-4 text-white">
+            <div class="size-6 text-primary">
+                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">CinemaGo</h2>
+        </div>
+        <nav class="hidden md:flex items-center gap-9">
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Lịch chiếu</a>
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Rạp</a>
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Khuyến mãi</a>
+        </nav>
+        <div class="flex items-center gap-2">
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                <span class="truncate">Đăng nhập</span>
+            </button>
+            <button class="hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#3c2348] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#3c2348]/80 transition-colors">
+                <span class="truncate">Đăng ký</span>
+            </button>
+            <div class="hidden bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ml-4"
+                 style='background-image: url("https://ui-avatars.com/api/?name=User&background=random");'></div>
+        </div>
+    </header>
+
+    <main class="w-full px-4 sm:px-8 py-12 md:py-16">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+
+            <div class="flex-grow">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter leading-tight uppercase">Chọn Ghế</h1>
+                    <p class="text-white/70 mt-2">CGV Vincom Center Bà Triệu - Phòng chiếu 4</p>
+                </div>
+
+                <div class="bg-[#140b18] px-4 py-8 sm:p-8 rounded-xl border border-white/5">
+                    <div class="w-full text-center mb-12 relative">
+                        <div class="w-3/4 mx-auto h-4 bg-white/20 rounded-full blur-md absolute top-0 left-0 right-0"></div>
+                        <div class="screen-curved bg-white/10 text-white/50 py-2 h-16 w-3/4 mx-auto mb-8 flex items-end justify-center">
+                            <p class="font-bold text-sm tracking-widest">MÀN HÌNH</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-4 overflow-x-auto pb-4">
+                        <div class="flex items-center gap-4">
+                            <span class="w-6 text-center text-white/50 font-medium">A</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#2a2a2a] cursor-not-allowed flex items-center justify-center">
+                                    <span class="text-white/20 text-xs">X</span>
+                                </div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#2a2a2a] cursor-not-allowed flex items-center justify-center">
+                                    <span class="text-white/20 text-xs">X</span>
+                                </div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110 shadow-lg shadow-[#4a3953]/20"></div>
+                            </div>
+                            <span class="w-6 text-center text-white/50 font-medium">A</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <span class="w-6 text-center text-white/50 font-medium">B</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-primary shadow-[0_0_10px_theme('colors.primary')] cursor-pointer transition-all scale-110 border border-white/20 flex items-center justify-center text-white text-xs font-bold">5</div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                            </div>
+                            <span class="w-6 text-center text-white/50 font-medium">B</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <span class="w-6 text-center text-white/50 font-medium">C</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-primary shadow-[0_0_10px_theme('colors.primary')] cursor-pointer transition-all scale-110 border border-white/20 flex items-center justify-center text-white text-xs font-bold">6</div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-primary shadow-[0_0_10px_theme('colors.primary')] cursor-pointer transition-all scale-110 border border-white/20 flex items-center justify-center text-white text-xs font-bold">7</div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                            </div>
+                            <span class="w-6 text-center text-white/50 font-medium">C</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <span class="w-6 text-center text-white/50 font-medium">D</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-[#4a3953] hover:bg-[#5f496b] cursor-pointer transition-all hover:scale-110"></div>
+                            </div>
+                            <span class="w-6 text-center text-white/50 font-medium">D</span>
+                        </div>
+
+                        <div class="flex items-center gap-4 mt-4">
+                            <span class="w-6 text-center text-yellow-500/70 font-bold">E</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                            </div>
+                            <span class="w-6 text-center text-yellow-500/70 font-bold">E</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <span class="w-6 text-center text-yellow-500/70 font-bold">F</span>
+                            <div class="flex gap-2 md:gap-3">
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                                <div class="w-7 h-7 md:w-9 md:h-9 rounded-t-lg rounded-b-md bg-yellow-600 hover:bg-yellow-500 cursor-pointer transition-all hover:scale-110 border border-white/5 shadow-lg shadow-yellow-600/10"></div>
+                            </div>
+                            <span class="w-6 text-center text-yellow-500/70 font-bold">F</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 mt-12 pt-6 border-t border-white/10">
+                        <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded bg-[#4a3953]"></div>
+                            <span class="text-white/70 text-sm">Ghế thường</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded bg-yellow-600"></div>
+                            <span class="text-white/70 text-sm">Ghế VIP</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded bg-primary"></div>
+                            <span class="text-white/70 text-sm">Đang chọn</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded bg-[#2a2a2a] flex items-center justify-center text-[10px] text-white/30">X</div>
+                            <span class="text-white/70 text-sm">Đã bán</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-96 flex-shrink-0">
+                <div class="bg-[#2b1933] rounded-xl p-6 sticky top-28 border border-white/5 shadow-2xl shadow-black/20">
+                    <div class="flex items-start gap-4">
+                        <div class="w-24 flex-shrink-0">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg shadow-md"
+                                 style='background-image: url("https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop");'></div>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-white leading-tight uppercase">Hành Tinh Giữa Các Vì Sao</h2>
+                            <div class="mt-2 flex items-center gap-x-2.5 text-sm text-white/60">
+                                <span>Viễn tưởng</span>
+                                <span class="text-white/30">|</span>
+                                <span class="px-1.5 py-0.5 border border-white/30 rounded text-xs">C13</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-white/10 space-y-3 text-white/80 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-white/60">Rạp chiếu</span>
+                            <span class="font-bold text-right text-white">CGV Vincom Bà Triệu</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-white/60">Phòng chiếu</span>
+                            <span class="font-bold text-right text-white">Phòng 04</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-white/60">Suất chiếu</span>
+                            <span class="font-bold text-right text-white">19:30 - 20/07/2024</span>
+                        </div>
+                        <div class="flex items-start justify-between">
+                            <span class="font-medium text-white/60">Ghế đã chọn</span>
+                            <div class="font-bold text-right text-primary">
+                                <p>B5, C6, C7</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-lg font-medium text-white/80">Tạm tính</span>
+                            <span class="text-3xl font-black text-primary tracking-tight">255.000₫</span>
+                        </div>
+                        <button class="mt-6 flex w-full min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+                            <span class="truncate">Tiếp tục thanh toán</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#140b18] border-t border-white/10 mt-20">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1">
+                    <div class="flex items-center gap-4 text-white">
+                        <div class="size-6 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">CinemaGo</h2>
+                    </div>
+                    <p class="mt-4 text-sm text-white/60">Trang web đặt vé xem phim hàng đầu Việt Nam.</p>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Phim</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Phim đang chiếu</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Phim sắp chiếu</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Suất chiếu đặc biệt</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Hỗ trợ</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Về chúng tôi</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Câu hỏi thường gặp</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Liên hệ</h3>
+                    <ul class="mt-4 space-y-2 text-sm text-white/60">
+                        <li>Email: support@cinemago.vn</li>
+                        <li>Hotline: 1900 1234</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-white/10 pt-8 text-center text-sm text-white/50">
+                © 2024 CinemaGo. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

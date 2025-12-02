@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CinemaGo - Đặt Vé Xem Phim</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet"/>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a413ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#1c1022",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+        /* Ẩn thanh cuộn nhưng vẫn cho phép cuộn */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative w-full">
+
+    <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 py-3 bg-background-dark/80 backdrop-blur-sm">
+        <div class="flex items-center gap-4 text-white">
+            <div class="size-6 text-primary">
+                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">CinemaGo</h2>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-9">
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Lịch chiếu</a>
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Rạp</a>
+            <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Khuyến mãi</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                <span class="truncate">Đăng nhập</span>
+            </button>
+            <button class="hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#3c2348] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#3c2348]/80 transition-colors">
+                <span class="truncate">Đăng ký</span>
+            </button>
+            <div class="hidden bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ml-4"
+                 style='background-image: url("https://ui-avatars.com/api/?name=User&background=random");'></div>
+        </div>
+    </header>
+
+    <main class="w-full">
+        <section class="relative w-full h-[60vh] min-h-[400px] max-h-[720px] bg-black">
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
+                 style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/70 to-transparent"></div>
+            <div class="relative z-10 flex flex-col justify-end h-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 pb-20">
+                <div class="max-w-2xl text-white">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-tight uppercase">Vùng Đất Câm Lặng: Ngày Đầu Tiên</h1>
+                    <p class="mt-4 text-base md:text-lg text-white/80">Trải nghiệm sự khởi đầu của ngày tận thế, nơi thế giới chìm trong im lặng để sinh tồn. Sắp ra mắt.</p>
+                    <div class="mt-8 flex items-center gap-4">
+                        <button class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                            <span class="truncate">Mua vé ngay</span>
+                        </button>
+                        <button class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-white/20 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-white/30 transition-colors backdrop-blur-sm">
+                            <span class="truncate">Xem Trailer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 w-full max-w-screen-2xl mx-auto">
+
+            <div class="bg-[#2b1933] rounded-xl -mt-8 relative z-20 p-4 shadow-2xl shadow-black/30">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="lg:col-span-2">
+                        <label class="flex flex-col min-w-40 h-12 w-full">
+                            <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                                <div class="text-[#b792c9] flex border-none bg-[#3c2348] items-center justify-center pl-4 rounded-l-lg border-r-0">
+                                    <span class="material-symbols-outlined">search</span>
+                                </div>
+                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-white focus:outline-0 focus:ring-0 border-none bg-[#3c2348] focus:border-none h-full placeholder:text-[#b792c9] px-4 text-base font-normal leading-normal" placeholder="Tìm kiếm phim..." value=""/>
+                            </div>
+                        </label>
+                    </div>
+                    <button class="flex h-12 w-full items-center justify-between gap-x-2 rounded-lg bg-[#3c2348] px-4">
+                        <p class="text-white text-sm font-medium leading-normal">Thể loại</p>
+                        <span class="material-symbols-outlined text-white">expand_more</span>
+                    </button>
+                    <button class="flex h-12 w-full items-center justify-between gap-x-2 rounded-lg bg-[#3c2348] px-4">
+                        <p class="text-white text-sm font-medium leading-normal">Rạp chiếu</p>
+                        <span class="material-symbols-outlined text-white">expand_more</span>
+                    </button>
+                    <button class="flex h-12 w-full items-center justify-between gap-x-2 rounded-lg bg-[#3c2348] px-4">
+                        <p class="text-white text-sm font-medium leading-normal">Ngày xem</p>
+                        <span class="material-symbols-outlined text-white">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <section class="py-10">
+                <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Phim đang chiếu</h2>
+                <div class="flex overflow-x-auto hide-scrollbar -mx-4 pb-4">
+                    <div class="flex items-stretch px-4 gap-4">
+
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Biệt Đội Báo Thù: Hồi Kết</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Hành động | 180 phút | C18</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                                    <span class="truncate">Mua vé</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1512113569124-a2696a31372c?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Tình Yêu Ngày Hạ</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Hài, Lãng mạn | 120 phút | P</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                                    <span class="truncate">Mua vé</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1509347528160-9a9e33742cd4?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Ám Ảnh Kinh Hoàng 3</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Kinh dị | 115 phút | C18</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                                    <span class="truncate">Mua vé</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Hành Tinh Giữa Các Vì Sao</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Viễn tưởng | 169 phút | C13</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                                    <span class="truncate">Mua vé</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-10 border-t border-white/10">
+                <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Phim sắp chiếu</h2>
+                <div class="flex overflow-x-auto hide-scrollbar -mx-4 pb-4">
+                    <div class="flex items-stretch px-4 gap-4">
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Chiến Binh Mới</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Hành động | Sắp ra mắt</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#3c2348] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#3c2348]/80 transition-colors">
+                                    <span class="truncate">Chi tiết</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex h-full flex-1 flex-col gap-4 rounded-lg bg-[#2b1933] shadow-[0_0_4px_rgba(0,0,0,0.1)] min-w-60 w-60 transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="w-full bg-center bg-no-repeat aspect-[2/3] bg-cover rounded-lg flex flex-col"
+                                 style='background-image: url("https://images.unsplash.com/photo-1613324948399-8c914c66d41d?q=80&w=800&auto=format&fit=crop");'></div>
+                            <div class="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
+                                <div>
+                                    <p class="text-white text-base font-bold leading-normal truncate">Thế Giới Phép Thuật</p>
+                                    <p class="text-[#b792c9] text-sm font-normal leading-normal">Phiêu lưu | Sắp ra mắt</p>
+                                </div>
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#3c2348] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#3c2348]/80 transition-colors">
+                                    <span class="truncate">Chi tiết</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-[#140b18] border-t border-white/10 mt-20">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1">
+                    <div class="flex items-center gap-4 text-white">
+                        <div class="size-6 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">CinemaGo</h2>
+                    </div>
+                    <p class="mt-4 text-sm text-white/60">Trang web đặt vé xem phim hàng đầu Việt Nam.</p>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Phim</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Phim đang chiếu</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Phim sắp chiếu</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Suất chiếu đặc biệt</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Hỗ trợ</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Về chúng tôi</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Câu hỏi thường gặp</a></li>
+                        <li><a class="text-sm text-white/60 hover:text-white" href="#">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Liên hệ</h3>
+                    <ul class="mt-4 space-y-2 text-sm text-white/60">
+                        <li>Email: support@cinemago.vn</li>
+                        <li>Hotline: 1900 1234</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-white/10 pt-8 text-center text-sm text-white/50">
+                © 2024 CinemaGo. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
