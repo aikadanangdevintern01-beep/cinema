@@ -11,8 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // 🚨 THÊM DÒNG NÀY
 import jakarta.validation.Valid;
 
 @Controller
@@ -82,11 +81,19 @@ public class StaffController {
         }
     }
 
-    // THÊM MỚI NHÂN VIÊN
+    // THÊM MỚI NHÂN VIÊN - ĐÃ FIX
     @PostMapping("/save")
     public String save(
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile, // ✅ required = false
+            @RequestParam(value = "identityCardImageFile", required = false) MultipartFile identityCardImageFile, // ✅
+                                                                                                                  // THÊM
+                                                                                                                  // CÁC
+                                                                                                                  // FILE
+                                                                                                                  // KHÁC
+                                                                                                                  // NẾU
+                                                                                                                  // CẦN
             RedirectAttributes redirect) {
 
         if (result.hasErrors()) {
@@ -95,17 +102,30 @@ public class StaffController {
             return "redirect:/admin/staffs/create";
         }
 
-        staffService.createStaff(dto);
-        redirect.addFlashAttribute("success", "Thêm nhân viên thành công!");
+        try {
+            // GỌI SERVICE ĐỂ XỬ LÝ LƯU THÔNG TIN VÀ FILE
+            staffService.createStaff(dto, avatarFile);
+            redirect.addFlashAttribute("success", "Thêm nhân viên thành công!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            redirect.addFlashAttribute("staff", dto);
+            return "redirect:/admin/staffs/create";
+        }
+
         return "redirect:/admin/staffs";
     }
 
-    // CẬP NHẬT NHÂN VIÊN
+    // CẬP NHẬT NHÂN VIÊN - ĐÃ FIX
     @PostMapping("/update/{id}")
     public String update(
             @PathVariable("id") Integer id,
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile, // ✅ THÊM FILE
+            @RequestParam(value = "identityCardImageFile", required = false) MultipartFile identityCardImageFile, // ✅
+                                                                                                                  // THÊM
+                                                                                                                  // FILE
+                                                                                                                  // KHÁC
             RedirectAttributes redirect) {
 
         if (result.hasErrors()) {
@@ -114,8 +134,15 @@ public class StaffController {
             return "redirect:/admin/staffs/edit/" + id;
         }
 
-        staffService.updateStaff(id, dto);
-        redirect.addFlashAttribute("success", "Cập nhật nhân viên thành công!");
+        try {
+            staffService.updateStaff(id, dto, avatarFile); // ✅ Truyền file vào
+            redirect.addFlashAttribute("success", "Cập nhật nhân viên thành công!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            redirect.addFlashAttribute("staff", dto);
+            return "redirect:/admin/staffs/edit/" + id;
+        }
+
         return "redirect:/admin/staffs";
     }
 

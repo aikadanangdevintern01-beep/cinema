@@ -175,7 +175,7 @@
         <!-- FORM -->
         <div class="card">
             <div class="card-body p-5">
-                <form th:action="@{${staff.id == null} ? '/admin/staffs/create' : '/admin/staffs/update'}"
+                <form th:action="@{${staff.id == null} ? '/admin/staffs/save' : '/admin/staffs/update/' + ${staff.id}}"
                     th:object="${staff}" method="post" enctype="multipart/form-data">
 
                     <input type="hidden" th:field="*{id}">
