@@ -182,30 +182,30 @@
             </span>
         </h3>
 
-        <form th:action="@{/admin/staffs/save}" th:object="${staff}" method="post" enctype="multipart/form-data"
+        <form th:action="@{/admin/staffs/save}" th:object="${staff}" method="post"
             class="needs-validation" novalidate>
 
             <!-- ID ẩn – BẮT BUỘC có khi edit -->
             <input type="hidden" th:field="*{id}" />
 
             <!-- ==================== AVATAR ==================== -->
-            <div class="text-center mb-5">
-                <div class="position-relative d-inline-block">
-                    <img th:src="${staff.avatarUrl} 
-                                 ?: 'https://via.placeholder.com/150x150?text=Avatar'" alt="Avatar"
-                        class="avatar-preview rounded-circle shadow-sm border border-3 border-white" id="avatarPreview"
-                        style="width: 150px; height: 150px; object-fit: cover;">
-
-                    <!-- Nút đổi ảnh -->
-                    <label class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle p-2 shadow"
-                        style="transform: translate(30%, 30%);">
-                        <i class="bi bi-camera-fill"></i>
-                        <input type="file" name="avatarFile" accept="image/jpeg,image/png" class="d-none"
-                            onchange="previewAvatar(event)">
-                    </label>
-                </div>
-                <small class="text-muted d-block mt-3">JPG, PNG, WebP • Tối đa 10MB</small>
-            </div>
+<div class="text-center mb-5">
+    <div class="position-relative d-inline-block">
+        <img th:src="${staff.avatarUrl} ?: 'https://via.placeholder.com/150?text=Avatar'" alt="Avatar"
+            id="avatarPreview" class="rounded-circle avatar-preview"
+            style="width: 150px; height: 150px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    </div>
+    <div class="mt-3">
+        <label class="form-label fw-bold">Dán link ảnh đại diện (URL)</label>
+        <input type="url" class="form-control form-control-lg text-center" th:field="*{avatarUrl}"
+            placeholder="https://example.com/avatar.jpg"
+            onchange="document.getElementById('avatarPreview').src = this.value || 'https://via.placeholder.com/150?text=Avatar'">
+        <small class="text-muted">
+            Gợi ý: Dùng <a href="https://imgur.com" target="_blank">imgur.com</a> hoặc
+            <a href="https://cloudinary.com" target="_blank">Cloudinary</a> để upload ảnh → copy link
+        </small>
+    </div>
+</div>
 
             <div class="row g-4">
                 <!-- CỘT TRÁI -->

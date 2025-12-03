@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // 🚨 THÊM DÒNG NÀY
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.validation.Valid;
 
 @Controller
@@ -93,29 +93,20 @@ public class StaffController {
     public String save(
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-            Model model) { // KHÔNG DÙNG RedirectAttributes khi có lỗi!
+            Model model) {
 
-        // CÓ LỖI → TRẢ VỀ TRỰC TIẾP FORM
         if (result.hasErrors()) {
             model.addAttribute("staff", dto);
-            model.addAttribute("isEdit", dto.getId() != null);
             return "admin/staff/form";
         }
 
         try {
-            if (avatarFile != null && !avatarFile.isEmpty()) {
-                String url = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
-                dto.setAvatarUrl(url);
-            }
-
             if (dto.getId() == null) {
                 staffService.createStaff(dto);
             } else {
                 staffService.updateStaff(dto.getId(), dto);
             }
-
-            return "redirect:/admin/staffs"; // CHỈ REDIRECT KHI THÀNH CÔNG
+            return "redirect:/admin/staffs";
 
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
