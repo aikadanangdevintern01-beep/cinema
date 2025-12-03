@@ -3,6 +3,7 @@ package hunglcb.example.module5.controller;
 
 import hunglcb.example.module5.dto.request.StaffRequestDTO;
 import hunglcb.example.module5.dto.response.StaffResponseDTO;
+import hunglcb.example.module5.service.FileUploadService;
 import hunglcb.example.module5.service.IStaffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 public class StaffController {
 
     private final IStaffService staffService;
+    private final FileUploadService fileUploadService;
 
     // DANH SÁCH + TÌM KIẾM + PHÂN TRANG – ĐÃ RÕ RÀNG 100%
     @GetMapping({ "", "/" })
@@ -51,83 +53,90 @@ public class StaffController {
         return "admin/staff/list";
     }
 
-    // FORM THÊM MỚI
+    // 1. FORM THÊM MỚI – HOÀN HẢO
     @GetMapping("/create")
     public String showCreateForm(Model model) {
+        // Nếu có lỗi từ flash attribute (validation fail) → giữ lại dữ liệu cũ
         if (!model.containsAttribute("staff")) {
             model.addAttribute("staff", new StaffRequestDTO());
         }
         model.addAttribute("isEdit", false);
+        model.addAttribute("pageTitle", "Thêm nhân viên mới");
         return "admin/staff/form";
     }
 
-    // FORM SỬA – ĐÃ XỬ LÝ RÕ RÀNG LỖI + FLASH ATTRIBUTE
+    // 2. FORM SỬA – HOÀN HẢO, AN TOÀN, KHÔNG LỖI
     @GetMapping("/edit/{id}")
-    public String showEditForm(
-            @PathVariable("id") Integer id,
-            Model model,
-            RedirectAttributes redirect) {
-
+    public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirect) {
         try {
+            // Lấy dữ liệu nhân viên
             StaffResponseDTO staffResp = staffService.getStaffById(id);
+
+            // Nếu có flash attribute từ lỗi validation → ưu tiên dùng nó (giữ dữ liệu người
+            // dùng nhập)
             if (!model.containsAttribute("staff")) {
                 model.addAttribute("staff", staffService.toRequestDTO(staffResp));
             }
+
             model.addAttribute("isEdit", true);
+            model.addAttribute("pageTitle", "Chỉnh sửa nhân viên");
+
             return "admin/staff/form";
+
         } catch (Exception e) {
             redirect.addFlashAttribute("error", "Không tìm thấy nhân viên với ID: " + id);
             return "redirect:/admin/staffs";
         }
     }
 
-    // THÊM MỚI NHÂN VIÊN - ĐÃ FIX
     @PostMapping("/save")
     public String save(
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile, // ✅ required = false
-            @RequestParam(value = "identityCardImageFile", required = false) MultipartFile identityCardImageFile, // ✅
-                                                                                                                  // THÊM
-                                                                                                                  // CÁC
-                                                                                                                  // FILE
-                                                                                                                  // KHÁC
-                                                                                                                  // NẾU
-                                                                                                                  // CẦN
-            RedirectAttributes redirect) {
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            Model model) { // KHÔNG DÙNG RedirectAttributes khi có lỗi!
 
+        // CÓ LỖI → TRẢ VỀ TRỰC TIẾP FORM
         if (result.hasErrors()) {
-            redirect.addFlashAttribute("org.springframework.validation.BindingResult.staff", result);
-            redirect.addFlashAttribute("staff", dto);
-            return "redirect:/admin/staffs/create";
+            model.addAttribute("staff", dto);
+            model.addAttribute("isEdit", dto.getId() != null);
+            return "admin/staff/form";
         }
 
         try {
-            // GỌI SERVICE ĐỂ XỬ LÝ LƯU THÔNG TIN VÀ FILE
-            staffService.createStaff(dto, avatarFile);
-            redirect.addFlashAttribute("success", "Thêm nhân viên thành công!");
-        } catch (Exception e) {
-            redirect.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-            redirect.addFlashAttribute("staff", dto);
-            return "redirect:/admin/staffs/create";
-        }
+            if (avatarFile != null && !avatarFile.isEmpty()) {
+                String avatarUrl = fileUploadService.saveAvatar(avatarFile, dto.getUsername());
+                dto.setAvatarUrl(avatarUrl);
+            }
 
-        return "redirect:/admin/staffs";
+            if (dto.getId() == null) {
+                staffService.createStaff(dto);
+            } else {
+                staffService.updateStaff(dto.getId(), dto);
+            }
+
+            return "redirect:/admin/staffs"; // CHỈ REDIRECT KHI THÀNH CÔNG
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Lưu thất bại: " + e.getMessage());
+            model.addAttribute("staff", dto);
+            model.addAttribute("isEdit", dto.getId() != null);
+            return "admin/staff/form";
+        }
     }
 
-    // CẬP NHẬT NHÂN VIÊN - ĐÃ FIX
     @PostMapping("/update/{id}")
     public String update(
             @PathVariable("id") Integer id,
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile, // ✅ THÊM FILE
-            @RequestParam(value = "identityCardImageFile", required = false) MultipartFile identityCardImageFile, // ✅
-                                                                                                                  // THÊM
-                                                                                                                  // FILE
-                                                                                                                  // KHÁC
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
             RedirectAttributes redirect) {
 
+        // 1. Đảm bảo ID từ URL được gán vào DTO (rất quan trọng!)
+        dto.setId(id);
+
+        // 2. Kiểm tra lỗi validation
         if (result.hasErrors()) {
             redirect.addFlashAttribute("org.springframework.validation.BindingResult.staff", result);
             redirect.addFlashAttribute("staff", dto);
@@ -135,10 +144,20 @@ public class StaffController {
         }
 
         try {
-            staffService.updateStaff(id, dto, avatarFile); // ✅ Truyền file vào
+            // 3. XỬ LÝ ẢNH ĐẠI DIỆN (nếu người dùng upload ảnh mới)
+            if (avatarFile != null && !avatarFile.isEmpty()) {
+                String avatarUrl = fileUploadService.saveAvatar(avatarFile, dto.getUsername());
+                dto.setAvatarUrl(avatarUrl); // Gán đường dẫn mới vào DTO
+            }
+            // Nếu không upload → giữ nguyên avatarUrl cũ (đã có trong DTO từ form)
+
+            // 4. Gọi Service – CHỈ TRUYỀN DTO (đã có avatarUrl)
+            staffService.updateStaff(id, dto);
+
             redirect.addFlashAttribute("success", "Cập nhật nhân viên thành công!");
+
         } catch (Exception e) {
-            redirect.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            redirect.addFlashAttribute("error", "Cập nhật thất bại: " + e.getMessage());
             redirect.addFlashAttribute("staff", dto);
             return "redirect:/admin/staffs/edit/" + id;
         }

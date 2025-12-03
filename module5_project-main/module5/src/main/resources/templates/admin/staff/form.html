@@ -172,117 +172,147 @@
             </div>
         </div>
 
-        <!-- FORM -->
-        <div class="card">
-            <div class="card-body p-5">
-                <form th:action="@{${staff.id == null} ? '/admin/staffs/save' : '/admin/staffs/update/' + ${staff.id}}"
-                    th:object="${staff}" method="post" enctype="multipart/form-data">
+<!-- FORM THÊM / SỬA NHÂN VIÊN – HOÀN HẢO 100% -->
+<div class="card shadow-lg border-0">
+    <div class="card-body p-5">
 
-                    <input type="hidden" th:field="*{id}">
+        <h3 class="text-center mb-5 fw-bold text-primary">
+            <span th:text="${staff.id == null ? 'THÊM MỚNHÂN VIÊN MỚI' : 'CHỈNH SỬA NHÂN VIÊN'}">
+                THÊM NHÂN VIÊN MỚI
+            </span>
+        </h3>
 
-                    <!-- AVATAR -->
-                    <div class="text-center mb-5">
-                        <img th:src="${staff.avatarUrl} ?: 'https://via.placeholder.com/120?text=Avatar'" alt="Avatar"
-                            class="avatar-preview mb-3" id="avatarPreview">
-                        <div>
-                            <label class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-camera"></i> Tải ảnh lên
-                                <input type="file" name="avatarFile" accept="image/*" class="d-none"
-                                    onchange="previewAvatar(event)">
-                            </label>
-                            <small class="text-muted d-block mt-2">Hình ảnh (JPG, PNG)</small>
-                        </div>
-                    </div>
+        <form th:action="@{/admin/staffs/save}" th:object="${staff}" method="post" enctype="multipart/form-data"
+            class="needs-validation" novalidate>
 
-                    <div class="row g-4">
-                        <!-- CỘT TRÁI -->
-                        <div class="col-lg-6">
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">Tài khoản</label>
-                                <input type="text" class="form-control form-control-lg" th:field="*{username}"
-                                    placeholder="Nhập tài khoản" required maxlength="50">
-                            </div>
+            <!-- ID ẩn – BẮT BUỘC có khi edit -->
+            <input type="hidden" th:field="*{id}" />
 
-                            <div class="mb-4" th:if="${staff.id == null}">
-                                <label class="form-label form-label-required">Mật khẩu</label>
-                                <input type="password" class="form-control form-control-lg" name="password"
-                                    placeholder="Nhập mật khẩu" required minlength="6">
-                            </div>
+            <!-- ==================== AVATAR ==================== -->
+            <div class="text-center mb-5">
+                <div class="position-relative d-inline-block">
+                    <img th:src="${staff.avatarUrl} 
+                                 ?: 'https://via.placeholder.com/150x150?text=Avatar'" alt="Avatar"
+                        class="avatar-preview rounded-circle shadow-sm border border-3 border-white" id="avatarPreview"
+                        style="width: 150px; height: 150px; object-fit: cover;">
 
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">CMND/CCCD</label>
-                                <input type="text" class="form-control form-control-lg" th:field="*{idCard}"
-                                    placeholder="Nhập số CMND/CCCD" required pattern="\d{9,12}" maxlength="12">
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">Số điện thoại</label>
-                                <input type="tel" class="form-control form-control-lg" th:field="*{phone}"
-                                    placeholder="0901234567" required pattern="0[0-9]{9}">
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Địa chỉ</label>
-                                <input type="text" class="form-control form-control-lg" th:field="*{address}"
-                                    placeholder="Nhập địa chỉ">
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Giới tính</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" th:field="*{gender}" value="Nam"
-                                        id="male">
-                                    <label class="form-check-label" for="male">Nam</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" th:field="*{gender}" value="Nữ"
-                                        id="female">
-                                    <label class="form-check-label" for="female">Nữ</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CỘT PHẢI -->
-                        <div class="col-lg-6">
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">Họ tên</label>
-                                <input type="text" class="form-control form-control-lg" th:field="*{fullName}"
-                                    placeholder="Nhập họ tên" required maxlength="100">
-                            </div>
-
-                            <div class="mb-4" th:if="${staff.id == null}">
-                                <label class="form-label form-label-required">Nhập lại mật khẩu</label>
-                                <input type="password" class="form-control form-control-lg" name="confirmPassword"
-                                    placeholder="Nhập lại mật khẩu" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">Email</label>
-                                <input type="email" class="form-control form-control-lg" th:field="*{email}"
-                                    placeholder="email@example.com" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label form-label-required">Ngày sinh</label>
-                                <input type="date" class="form-control form-control-lg" th:field="*{birthDate}"
-                                    required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NÚT HÀNH ĐỘNG -->
-                    <div class="text-center mt-5">
-                        <button type="submit" class="btn btn-success btn-save text-white">
-                            <i class="bi bi-check-lg"></i>
-                            <span th:text="${staff.id == null ? 'LƯU THÔNG TIN' : 'CẬP NHẬT'}">LƯU THÔNG TIN</span>
-                        </button>
-                        <a th:href="@{/admin/staffs}" class="btn btn-secondary btn-back ms-3">
-                            <i class="bi bi-arrow-left"></i> QUAY LẠI
-                        </a>
-                    </div>
-                </form>
+                    <!-- Nút đổi ảnh -->
+                    <label class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle p-2 shadow"
+                        style="transform: translate(30%, 30%);">
+                        <i class="bi bi-camera-fill"></i>
+                        <input type="file" name="avatarFile" accept="image/jpeg,image/png,image/webp" class="d-none"
+                            onchange="previewAvatar(event)">
+                    </label>
+                </div>
+                <small class="text-muted d-block mt-3">JPG, PNG, WebP • Tối đa 10MB</small>
             </div>
-        </div>
+
+            <div class="row g-4">
+                <!-- CỘT TRÁI -->
+                <div class="col-lg-6">
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Tài khoản</label>
+                        <input type="text" class="form-control form-control-lg" th:field="*{username}"
+                            placeholder="Nhập tài khoản đăng nhập" required minlength="4" maxlength="50"
+                            th:disabled="${staff.id != null}">
+                        <div class="invalid-feedback">Tài khoản từ 4-50 ký tự</div>
+                    </div>
+
+                    <!-- Mật khẩu chỉ hiện khi thêm mới -->
+                    <div class="mb-4" th:if="${staff.id == null}">
+                        <label class="form-label form-label-required">Mật khẩu</label>
+                        <input type="password" class="form-control form-control-lg" name="password"
+                            placeholder="Nhập mật khẩu" required minlength="6">
+                        <div class="invalid-feedback">Mật khẩu ít nhất 6 ký tự</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">CMND/CCCD</label>
+                        <input type="text" class="form-control form-control-lg" th:field="*{idCard}"
+                            placeholder="Nhập số CMND/CCCD" required pattern="\d{9,12}" maxlength="12">
+                        <div class="invalid-feedback">CMND/CCCD phải chứa 9-12 chữ số</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Số điện thoại</label>
+                        <input type="tel" class="form-control form-control-lg" th:field="*{phone}"
+                            placeholder="0901234567" required pattern="0[0-9]{9}">
+                        <div class="invalid-feedback">Số điện thoại phải bắt đầu 0 và có 10 số</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control form-control-lg" th:field="*{address}"
+                            placeholder="Nhập địa chỉ thường trú">
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Giới tính</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:field="*{gender}" value="Nam" id="male"
+                                    required>
+                                <label class="form-check-label" for="male">Nam</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" th:field="*{gender}" value="Nữ"
+                                    id="female">
+                                <label class="form-check-label" for="female">Nữ</label>
+                            </div>
+                        </div>
+                        <div class="text-danger small mt-1" th:if="${#fields.hasErrors('gender')}"
+                            th:errors="*{gender}"></div>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI -->
+                <div class="col-lg-6">
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Họ và tên</label>
+                        <input type="text" class="form-control form-control-lg" th:field="*{fullName}"
+                            placeholder="Nhập họ và tên" required maxlength="100">
+                        <div class="invalid-feedback">Vui lòng nhập họ tên</div>
+                    </div>
+
+                    <!-- Nhập lại mật khẩu khi thêm mới -->
+                    <div class="mb-4" th:if="${staff.id == null}">
+                        <label class="form-label form-label-required">Nhập lại mật khẩu</label>
+                        <input type="password" class="form-control form-control-lg" name="confirmPassword"
+                            placeholder="Nhập lại mật khẩu" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Email</label>
+                        <input type="email" class="form-control form-control-lg" th:field="*{email}"
+                            placeholder="email@company.com" required>
+                        <div class="invalid-feedback">Email không hợp lệ</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label form-label-required">Ngày sinh</label>
+                        <input type="date" class="form-control form-control-lg" th:field="*{birthDate}" required
+                            max="2007-12-31">
+                        <div class="invalid-feedback">Vui lòng chọn ngày sinh</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NÚT HÀNH ĐỘNG -->
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-success btn-lg px-5 shadow">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span th:text="${staff.id == null ? 'THÊM NHÂN VIÊN' : 'CẬP NHẬT THÔNG TIN'}">LƯU</span>
+                </button>
+                <a th:href="@{/admin/staffs}" class="btn btn-secondary btn-lg px-5 ms-3">
+                    <i class="bi bi-x-circle-fill"></i> HỦY BỎ
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,3 +1,4 @@
+// src/main/java/hunglcb/example/module5/config/MultipartConfig.java
 package hunglcb.example.module5.config;
 
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,6 @@ public class MultipartConfig {
 
     @Bean
     public MultipartResolver multipartResolver() {
-        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
-        resolver.setResolveLazily(true);
-        return resolver;
+        return new StandardServletMultipartResolver();
     }
 }

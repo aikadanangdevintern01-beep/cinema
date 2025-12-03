@@ -40,6 +40,7 @@ public class StaffRequestDTO {
     @NotNull(message = "Ngày sinh không được để trống")
     private LocalDate birthDate; // ĐÃ CÓ NGÀY SINH
 
+    @NotNull(message = "không được để trống")
     private String address;
 
     @NotBlank(message = "Vui lòng chọn giới tính")
