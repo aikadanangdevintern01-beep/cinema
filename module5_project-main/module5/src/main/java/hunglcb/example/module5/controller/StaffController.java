@@ -105,8 +105,8 @@ public class StaffController {
 
         try {
             if (avatarFile != null && !avatarFile.isEmpty()) {
-                String avatarUrl = fileUploadService.saveAvatar(avatarFile, dto.getUsername());
-                dto.setAvatarUrl(avatarUrl);
+                String url = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
+                dto.setAvatarUrl(url);
             }
 
             if (dto.getId() == null) {
@@ -118,9 +118,8 @@ public class StaffController {
             return "redirect:/admin/staffs"; // CHỈ REDIRECT KHI THÀNH CÔNG
 
         } catch (Exception e) {
-            model.addAttribute("error", "Lưu thất bại: " + e.getMessage());
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("staff", dto);
-            model.addAttribute("isEdit", dto.getId() != null);
             return "admin/staff/form";
         }
     }
@@ -146,7 +145,7 @@ public class StaffController {
         try {
             // 3. XỬ LÝ ẢNH ĐẠI DIỆN (nếu người dùng upload ảnh mới)
             if (avatarFile != null && !avatarFile.isEmpty()) {
-                String avatarUrl = fileUploadService.saveAvatar(avatarFile, dto.getUsername());
+                String avatarUrl = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
                 dto.setAvatarUrl(avatarUrl); // Gán đường dẫn mới vào DTO
             }
             // Nếu không upload → giữ nguyên avatarUrl cũ (đã có trong DTO từ form)

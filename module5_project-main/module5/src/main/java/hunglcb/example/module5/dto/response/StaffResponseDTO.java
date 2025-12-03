@@ -1,4 +1,4 @@
-// hunglcb/example/module5/dto/response/StaffResponseDTO.java
+// src/main/java/hunglcb/example/module5/dto/response/StaffResponseDTO.java
 package hunglcb.example.module5.dto.response;
 
 import lombok.*;
@@ -11,18 +11,28 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StaffResponseDTO {
+
     private Integer id;
-    private String staffCode; // NV000001
+
+    // Mã nhân viên đẹp: NV000001, NV000125...
+    private String staffCode;
+
     private String username;
     private String fullName;
     private String email;
     private String phone;
     private String idCard;
     private String address;
-    private LocalDate birthDate; // ĐÃ CÓ
-    private String gender; // ĐÃ CÓ
+
+    private LocalDate birthDate;
+    private String gender;
+
+    // QUAN TRỌNG NHẤT: ĐỂ HIỂN THỊ ẢNH ĐẠI DIỆN
+    private String avatarUrl; // VD: "/uploads/avatars/admin-123e4567.jpg"
+
     private Integer roleId;
     private String roleName;
+
     private Boolean isActive;
     private LocalDateTime createdAt;
 }

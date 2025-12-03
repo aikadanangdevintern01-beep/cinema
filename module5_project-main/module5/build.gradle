@@ -1,23 +1,16 @@
 plugins {
     id 'java'
-    id 'war'
-    id 'org.springframework.boot' version '4.0.0' 
+    id 'org.springframework.boot' version '4.0.0'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'hunglcb.example'
 version = '0.0.1-SNAPSHOT'
-description = 'module5'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs += ["-parameters"]
-    options.encoding = "UTF-8"
 }
 
 configurations {
@@ -31,34 +24,31 @@ repositories {
 }
 
 dependencies {
-    // Core Spring Boot starters
-    implementation 'org.springframework.boot:spring-boot-starter-web' // THÊM DÒNG NÀY
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    
-    // XÓA các dòng này (đã bao gồm trong starter-web và starter-data-jpa):
-    // implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    // implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    // implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    
+
     runtimeOnly 'com.mysql:mysql-connector-j'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    
-    // Test dependencies - đơn giản hóa
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    
-    compileOnly 'org.jspecify:jspecify:1.0.0'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// PHẦN NÀY ĐÃ SỬA HOÀN HẢO – KHÔNG CÒN LỖI DÒNG 61
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
 }
 
 tasks.named('test') {

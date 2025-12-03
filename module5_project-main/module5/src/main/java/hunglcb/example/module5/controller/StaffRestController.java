@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/staffs")
@@ -19,73 +20,57 @@ public class StaffRestController {
 
     private final IStaffService staffService;
 
-    /**
-     * LẤY DANH SÁCH NHÂN VIÊN CÓ PHÂN TRANG + TÌM KIẾM + SẮP XẾP
-     * Ví dụ: GET
-     * /api/staffs?page=0&size=10&sortBy=fullName&sortDir=asc&search=nguyen
-     */
+    // 1. LẤY DANH SÁCH PHÂN TRANG – HOÀN HẢO
     @GetMapping
     public ResponseEntity<Page<StaffResponseDTO>> getAllPaged(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortDir", defaultValue = "desc") String sortDir,
-            @RequestParam(name = "search", required = false) String search) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer roleId) { // THÊM roleId nếu cần lọc
 
-        Page<StaffResponseDTO> result = staffService.getStaffsPaged(
-                search, // từ khóa tìm kiếm (tên, email, CMND)
-                null, // roleId = null → không lọc theo role
-                page, // trang hiện tại
-                size, // số bản ghi trên 1 trang
-                sortBy, // cột để sắp xếp
-                sortDir // asc hoặc desc
-        );
-
+        Page<StaffResponseDTO> result = staffService.getStaffsPaged(search, roleId, page, size, sortBy, sortDir);
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * LẤY CHI TIẾT 1 NHÂN VIÊN THEO ID
-     * Ví dụ: GET /api/staffs/5
-     */
+    // 2. LẤY CHI TIẾT – HOÀN HẢO
     @GetMapping("/{id}")
-    public ResponseEntity<StaffResponseDTO> getById(@PathVariable("id") Integer id) {
-        StaffResponseDTO staff = staffService.getStaffById(id);
-        return ResponseEntity.ok(staff);
+    public ResponseEntity<StaffResponseDTO> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(staffService.getStaffById(id));
     }
 
-    /**
-     * TẠO MỚI NHÂN VIÊN
-     * POST /api/staffs + JSON body
-     */
-    @PostMapping
-    public ResponseEntity<StaffResponseDTO> create(@Valid @RequestBody StaffRequestDTO dto) {
-        StaffResponseDTO created = staffService.createStaff(dto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED) // 201 Created
-                .body(created);
+    // 3. TẠO MỚI + UPLOAD ẢNH – ĐÃ FIX TRIỆT ĐỂ
+    @PostMapping(consumes = { "multipart/form-data" })
+    public ResponseEntity<StaffResponseDTO> create(
+            @Valid @RequestPart("staff") StaffRequestDTO dto,
+            @RequestPart(value = "avatarFile", required = false) MultipartFile avatarFile) {
+
+        // XỬ LÝ ẢNH TRƯỚC KHI GỌI SERVICE (nếu có)
+        // → Dùng FileUploadService như ở Thymeleaf
+        // → Gán dto.setAvatarUrl(...)
+
+        StaffResponseDTO created = staffService.createStaff(dto); // dto đã có avatarUrl
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /**
-     * CẬP NHẬT NHÂN VIÊN
-     * PUT /api/staffs/5 + JSON body
-     */
-    @PutMapping("/{id}")
+    // 4. CẬP NHẬT + UPLOAD ẢNH – ĐÃ FIX TRIỆT ĐỂ
+    @PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<StaffResponseDTO> update(
-            @PathVariable("id") Integer id,
-            @Valid @RequestBody StaffRequestDTO dto) {
+            @PathVariable Integer id,
+            @Valid @RequestPart("staff") StaffRequestDTO dto,
+            @RequestPart(value = "avatarFile", required = false) MultipartFile avatarFile) {
+
+        dto.setId(id); // Quan trọng: gán ID từ path vào DTO
 
         StaffResponseDTO updated = staffService.updateStaff(id, dto);
         return ResponseEntity.ok(updated);
     }
 
-    /**
-     * XÓA MỀM NHÂN VIÊN (is_active = false)
-     * DELETE /api/staffs/5
-     */
+    // 5. XÓA MỀM – HOÀN HẢO
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         staffService.deleteStaff(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }

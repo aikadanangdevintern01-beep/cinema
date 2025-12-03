@@ -13,9 +13,9 @@ import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,15 +43,15 @@ public class StaffService implements IStaffService {
 
         Staff staff = Staff.builder()
                 .username(dto.getUsername())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .password(passwordEncoder.encode(dto.getPassword())) // BẮT BUỘC có password khi tạo mới
                 .fullName(dto.getFullName())
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .idCard(dto.getIdCard())
                 .address(dto.getAddress())
-                .birthDate(dto.getBirthDate()) // ĐÃ CÓ NGÀY SINH
-                .gender(dto.getGender()) // ĐÃ CÓ GIỚI TÍNH
-                .avatarUrl(dto.getAvatarUrl()) // LẤY TỪ DTO – ĐÃ CÓ ĐƯỜNG DẪN
+                .birthDate(dto.getBirthDate())
+                .gender(dto.getGender())
+                .avatarUrl(dto.getAvatarUrl()) // LẤY ĐƯỜNG DẪN ẢNH ĐÃ XỬ LÝ TỪ CONTROLLER
                 .role(staffRole)
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
@@ -61,6 +61,7 @@ public class StaffService implements IStaffService {
         return toResponseDTO(staff);
     }
 
+    // CẬP NHẬT NHÂN VIÊN – ĐÃ FIX HOÀN HẢO
     @Override
     public StaffResponseDTO updateStaff(Integer id, StaffRequestDTO dto) {
         Staff staff = staffRepository.findById(id)
@@ -74,23 +75,69 @@ public class StaffService implements IStaffService {
         if (staffRepository.existsByIdCardAndIdNot(dto.getIdCard(), id))
             throw new RuntimeException("CMND/CCCD đã tồn tại");
 
+        // CẬP NHẬT THÔNG TIN
         staff.setUsername(dto.getUsername());
         staff.setFullName(dto.getFullName());
         staff.setEmail(dto.getEmail());
         staff.setPhone(dto.getPhone());
         staff.setIdCard(dto.getIdCard());
         staff.setAddress(dto.getAddress());
-        staff.setBirthDate(dto.getBirthDate()); // CẬP NHẬT NGÀY SINH
-        staff.setGender(dto.getGender()); // CẬP NHẬT GIỚI TÍNH
+        staff.setBirthDate(dto.getBirthDate());
+        staff.setGender(dto.getGender());
 
+        // CẬP NHẬT ẢNH ĐẠI DIỆN NẾU CÓ MỚI
+        if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().trim().isEmpty()) {
+            staff.setAvatarUrl(dto.getAvatarUrl());
+        }
+
+        // CẬP NHẬT MẬT KHẨU NẾU NGƯỜI DÙNG NHẬP MỚI
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
             staff.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        staffRepository.save(staff);
+        staff = staffRepository.save(staff);
         return toResponseDTO(staff);
     }
 
+    // CHUYỂN ENTITY → RESPONSE DTO – ĐÃ BỔ SUNG avatarUrl
+    private StaffResponseDTO toResponseDTO(Staff staff) {
+        return StaffResponseDTO.builder()
+                .id(staff.getId())
+                .staffCode("NV" + String.format("%06d", staff.getId()))
+                .username(staff.getUsername())
+                .fullName(staff.getFullName())
+                .email(staff.getEmail())
+                .phone(staff.getPhone())
+                .idCard(staff.getIdCard())
+                .address(staff.getAddress())
+                .birthDate(staff.getBirthDate())
+                .gender(staff.getGender())
+                .avatarUrl(staff.getAvatarUrl()) // ĐÃ THÊM – BẮT BUỘC!
+                .roleId(staff.getRole().getId())
+                .roleName(staff.getRole().getName())
+                .isActive(staff.isActive())
+                .createdAt(staff.getCreatedAt())
+                .build();
+    }
+
+    // toRequestDTO – ĐÃ BỔ SUNG avatarUrl
+    @Override
+    public StaffRequestDTO toRequestDTO(StaffResponseDTO resp) {
+        return StaffRequestDTO.builder()
+                .id(resp.getId())
+                .username(resp.getUsername())
+                .fullName(resp.getFullName())
+                .email(resp.getEmail())
+                .phone(resp.getPhone())
+                .idCard(resp.getIdCard())
+                .address(resp.getAddress())
+                .birthDate(resp.getBirthDate())
+                .gender(resp.getGender())
+                .avatarUrl(resp.getAvatarUrl()) // ĐÃ THÊM – ĐỂ GIỮ ẢNH KHI SỬA
+                .build();
+    }
+
+    // CÁC METHOD KHÁC GIỮ NGUYÊN (đã hoàn hảo)
     @Override
     @Transactional(readOnly = true)
     public StaffResponseDTO getStaffById(Integer id) {
@@ -131,41 +178,6 @@ public class StaffService implements IStaffService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
-
-    // CHUYỂN ENTITY → RESPONSE DTO (có mã NV000001)
-    private StaffResponseDTO toResponseDTO(Staff staff) {
-        return StaffResponseDTO.builder()
-                .id(staff.getId())
-                .staffCode("NV" + String.format("%06d", staff.getId()))
-                .username(staff.getUsername())
-                .fullName(staff.getFullName())
-                .email(staff.getEmail())
-                .phone(staff.getPhone())
-                .idCard(staff.getIdCard())
-                .address(staff.getAddress())
-                .birthDate(staff.getBirthDate()) // TRẢ VỀ NGÀY SINH
-                .gender(staff.getGender()) // TRẢ VỀ GIỚI TÍNH
-                .roleId(staff.getRole().getId())
-                .roleName(staff.getRole().getName())
-                .isActive(staff.isActive())
-                .createdAt(staff.getCreatedAt())
-                .build();
-    }
-
-    @Override
-    public StaffRequestDTO toRequestDTO(StaffResponseDTO resp) {
-        return StaffRequestDTO.builder()
-                .id(resp.getId())
-                .username(resp.getUsername())
-                .fullName(resp.getFullName())
-                .email(resp.getEmail())
-                .phone(resp.getPhone())
-                .idCard(resp.getIdCard())
-                .address(resp.getAddress())
-                .birthDate(resp.getBirthDate()) // ĐƯA NGÀY SINH VÀO FORM
-                .gender(resp.getGender()) // ĐƯA GIỚI TÍNH VÀO FORM
-                .build();
     }
 
     @Override
