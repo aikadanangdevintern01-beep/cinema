@@ -3,7 +3,6 @@ package hunglcb.example.module5.controller;
 
 import hunglcb.example.module5.dto.request.StaffRequestDTO;
 import hunglcb.example.module5.dto.response.StaffResponseDTO;
-import hunglcb.example.module5.service.FileUploadService;
 import hunglcb.example.module5.service.IStaffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.validation.Valid;
 
@@ -21,7 +19,6 @@ import jakarta.validation.Valid;
 public class StaffController {
 
     private final IStaffService staffService;
-    private final FileUploadService fileUploadService;
 
     // DANH SÁCH + TÌM KIẾM + PHÂN TRANG – ĐÃ RÕ RÀNG 100%
     @GetMapping({ "", "/" })
@@ -120,28 +117,20 @@ public class StaffController {
             @PathVariable("id") Integer id,
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
             RedirectAttributes redirect) {
 
-        // 1. Đảm bảo ID từ URL được gán vào DTO (rất quan trọng!)
+        // BẮT BUỘC: Gán ID từ URL vào DTO (để service biết cập nhật ai)
         dto.setId(id);
 
-        // 2. Kiểm tra lỗi validation
+        // 1. KIỂM TRA LỖI VALIDATION
         if (result.hasErrors()) {
             redirect.addFlashAttribute("org.springframework.validation.BindingResult.staff", result);
             redirect.addFlashAttribute("staff", dto);
+            redirect.addFlashAttribute("error", "Vui lòng kiểm tra lại thông tin!");
             return "redirect:/admin/staffs/edit/" + id;
         }
 
         try {
-            // 3. XỬ LÝ ẢNH ĐẠI DIỆN (nếu người dùng upload ảnh mới)
-            if (avatarFile != null && !avatarFile.isEmpty()) {
-                String avatarUrl = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
-                dto.setAvatarUrl(avatarUrl); // Gán đường dẫn mới vào DTO
-            }
-            // Nếu không upload → giữ nguyên avatarUrl cũ (đã có trong DTO từ form)
-
-            // 4. Gọi Service – CHỈ TRUYỀN DTO (đã có avatarUrl)
             staffService.updateStaff(id, dto);
 
             redirect.addFlashAttribute("success", "Cập nhật nhân viên thành công!");

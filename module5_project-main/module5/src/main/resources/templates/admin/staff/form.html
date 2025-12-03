@@ -182,7 +182,9 @@
             </span>
         </h3>
 
-        <form th:action="@{/admin/staffs/save}" th:object="${staff}" method="post"
+        <form th:action="${staff.id == null} 
+        ? @{/admin/staffs/save} 
+        : @{/admin/staffs/update/{id}(id=${staff.id})}" th:object="${staff}" method="post"
             class="needs-validation" novalidate>
 
             <!-- ID ẩn – BẮT BUỘC có khi edit -->
