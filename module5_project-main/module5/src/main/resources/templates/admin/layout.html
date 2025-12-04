@@ -1,105 +1,626 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:fragment="layout (content, pageTitle, activeMenu)">
 
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý nhân viên - Rạp chiếu ABC</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Admin Dashboard'">Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta http-equiv="Content-Language" content="vi">
+    <!-- Chart.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f8f9fa;
+        /* Nhúng Font từ Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+
+        /* Ghi đè màu cho logo SVG (Target .text-primary) */
+        .app-logo .text-primary {
+            /* Đảm bảo màu chữ (currentColor) cho SVG là màu Accent */
+            color: var(--color-accent) !important;
         }
 
+        /* Ghi đè màu cho tên ứng dụng (Target .text-white) */
+        .app-logo .text-white {
+            /* Đảm bảo màu chữ cho tên ứng dụng là màu light-text */
+            color: var(--color-accent) !important;
+        }
+
+        .logo-icon-steps::after {
+            /* ... */
+            background-color: var(--color-accent);
+            /* ... */
+        }
+
+        /* Khai báo biến màu (Điều chỉnh theo phong cách Cinemago Dark Mode) */
+        :root {
+            /* Màu nền chủ đạo (Tím đậm/Gần đen) */
+            --color-primary-bg: #1A092D;
+            /* Màu nền cho Sidebar/Card/Header (Hơi nhạt hơn nền) */
+            --color-sidebar: #220B38;
+            --color-header-bg: #220B38;
+            /* Màu chữ chính (Trắng/Trắng ngà) */
+            --color-light-text: #EAEAEA;
+            /* Màu chữ phụ/Icon (Xám nhạt) */
+            --color-secondary-text: #B0B0B0;
+            /* Màu nhấn chính (Tím Magenta) - Dùng cho nút, active menu, icon */
+            --color-accent: #A926F7;
+            --color-accent-hover: #C55CFF;
+            /* Màu nền khi hover/active (Hơi nhạt/tối hơn sidebar) */
+            --color-active-bg: #2D1445;
+            /* Màu viền (Rất mỏng và tối) */
+            --color-border: #3A1F52;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-primary-bg);
+            color: var(--color-light-text);
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* -------------------------------------
+       1. Sidebar
+       ------------------------------------- */
         .sidebar {
+            width: 250px;
+            background-color: var(--color-sidebar);
+            box-shadow: 1px 0 15px rgba(0, 0, 0, 0.3);
+            padding-top: 0;
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 260px;
-            background: #343a40;
-            padding-top: 20px;
+            height: 100vh;
+            overflow-y: auto;
             z-index: 1000;
         }
 
-        .sidebar .nav-link {
-            color: #adb5bd;
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--color-sidebar);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Logo và Tên Ứng dụng */
+        .app-logo {
+            padding: 20px 20px;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* Logo căn trái trong sidebar */
+            gap: 10px;
+        }
+
+        .app-logo a {
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-light-text);
+            display: flex;
+            align-items: baseline;
+        }
+
+        /* Icon bậc thang (Sử dụng CSS để vẽ hình đơn giản) */
+        .logo-icon-steps {
+            width: 18px;
+            /* Chiều rộng tổng thể */
+            height: 18px;
+            /* Chiều cao tổng thể */
+            background-color: transparent;
+            position: relative;
+            transform: scale(1.3);
+            /* Phóng to nhẹ để dễ nhìn */
+        }
+
+        /* Vẽ 3 bậc thang */
+        .logo-icon-steps::before,
+        .logo-icon-steps::after {
+            content: '';
+            position: absolute;
+            background-color: var(--color-accent);
+            height: 6px;
+            bottom: 0;
+        }
+
+        .logo-icon-steps::before {
+            /* Bậc 1 & 2 (Dưới và giữa) */
+            width: 12px;
+            left: 0;
+        }
+
+        .logo-icon-steps::after {
+            /* Bậc 3 (Cao nhất) */
+            width: 6px;
+            left: 12px;
+            height: 18px;
+        }
+
+        /* Thiết lập lại logo text theo hình ảnh mới */
+        .app-logo .logo-cinemago-full {
+            color: var(--color-light-text);
+            font-weight: 700;
+            font-size: 24px;
+            text-transform: none;
+            /* đảm bảo không bị uppercase */
+        }
+
+
+        .menu {
+            padding-top: 0;
+        }
+
+        .menu-header {
+            color: var(--color-secondary-text);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 15px 20px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu ul {
+            list-style: none;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
             padding: 12px 20px;
-            border-radius: 8px;
-            margin: 5px 15px;
+            text-decoration: none;
+            color: var(--color-secondary-text);
+            transition: background-color 0.2s, color 0.2s;
+            border-left: 4px solid transparent;
+            font-weight: 500;
         }
 
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: #495057;
-            color: white;
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 16px;
         }
 
+        .menu-item a:hover {
+            background-color: var(--color-active-bg);
+            color: var(--color-light-text);
+        }
+
+        .menu-item.active a {
+            background-color: var(--color-active-bg);
+            color: var(--color-accent);
+            font-weight: 600;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .menu-item.active i {
+            color: var(--color-accent);
+        }
+
+        .menu-item.has-submenu a::after {
+            content: '\f0d9';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: auto;
+            font-size: 8px;
+            color: var(--color-secondary-text);
+            transform: rotate(180deg);
+            transition: transform 0.2s;
+        }
+
+        /* -------------------------------------
+       2. Main Content & Header
+       ------------------------------------- */
         .main-content {
-            margin-left: 260px;
-            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 250px;
         }
 
-        .header-fixed {
+        .top-header {
+            background-color: var(--color-header-bg);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             position: sticky;
             top: 0;
-            z-index: 900;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 25px;
+            z-index: 100;
         }
 
         .page-title {
-            font-size: 1.5rem;
+            font-size: 24px;
             font-weight: 600;
-            color: #212529;
+            color: var(--color-light-text);
         }
 
-        .btn-add {
-            background: #0d6efd;
+        .user-info {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .user-info:hover {
+            background-color: var(--color-active-bg);
+        }
+
+        .greeting,
+        .dropdown-arrow {
+            color: var(--color-secondary-text);
+            font-size: 14px;
+        }
+
+        .username {
+            font-weight: 600;
+            color: var(--color-light-text);
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .dropdown-arrow {
+            margin-left: 5px;
+            font-size: 10px;
+        }
+
+        .user-icon {
+            font-size: 18px;
+            color: var(--color-accent);
+            margin-left: 10px;
+        }
+
+        .content-section {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: var(--color-primary-bg);
+        }
+
+        .content-body {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* -------------------------------------
+       3. Components (Table, Button, Form)
+       ------------------------------------- */
+        .card {
+            background-color: var(--color-sidebar);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-light-text);
+        }
+
+        /* Primary Button (Thêm mới) */
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: white;
+            padding: 10px 20px;
             border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .table th {
-            background: #f1f3f5;
+        .btn-primary:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        /* Secondary Button (Hủy) */
+        .btn-secondary {
+            background-color: #6C757D;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5A6268;
+        }
+
+        /* --- Table Styles --- */
+        .table-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            padding: 0;
+            overflow-x: auto;
+            background-color: var(--color-sidebar);
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead tr {
+            background-color: var(--color-active-bg);
+            color: var(--color-light-text);
+            text-align: left;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        table th,
+        table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        table th {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--color-secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table td {
+            color: var(--color-light-text);
+        }
+
+        table tbody tr:hover {
+            background-color: var(--color-active-bg);
+        }
+
+        table td:last-child {
+            text-align: center;
+            width: 80px;
+        }
+
+        /* Action Button (Icon) */
+        .btn-action {
+            background: none;
+            border: none;
+            color: var(--color-accent);
+            padding: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-action:hover {
+            color: var(--color-accent-hover);
+            transform: scale(1.1);
+        }
+
+        /* --- Form Styles --- */
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: var(--color-sidebar);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--color-light-text);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            background-color: var(--color-active-bg);
+            color: var(--color-light-text);
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(169, 38, 247, 0.2);
+            background-color: #351C50;
         }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar text-white">
-        <div class="text-center mb-4">
-            <h4 class="mb-0">Rạp chiếu ABC</h4>
-            <small>Quản trị hệ thống</small>
-        </div>
-        <nav class="nav flex-column">
-            <a th:href="@{/admin/dashboard}" class="nav-link">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
-            <a th:href="@{/admin/staffs}" class="nav-link active">
-                <i class="bi bi-people"></i> Nhân viên
-            </a>
-            <!-- Thêm menu khác sau -->
-        </nav>
-    </div>
-
-    <!-- Main content -->
-    <div class="main-content">
-        <div class="header-fixed d-flex justify-content-between align-items-center">
-            <h1 class="page-title">Quản lý nhân viên</h1>
-            <div class="d-flex align-items-center gap-3">
-                <span th:text="${#authentication?.name}">Admin</span>
-                <div class="badge bg-danger rounded-pill">AD</div>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="flex items-center gap-4 text-white">
+                <div class="size-6 text-primary">
+                    <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="white"></path>
+                    </svg>
+                </div>
+                <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">CinemaGo</h2>
             </div>
-        </div>
 
-        <div th:replace="${content}"></div>
+
+            <nav class="menu">
+                <div class="menu-header">QUẢN LÝ CHUNG</div>
+                <ul>
+                    <li class="menu-item" th:classappend="${activeMenu} == 'movies' ? ' active' : ''">
+                        <a th:href="@{/admin/movies}">
+                            <i class="fas fa-film"></i>
+                            <span>Quản lý Phim</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>Bán vé</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">
+                            <i class="fas fa-bolt"></i>
+                            <span>Quản lý đặt vé</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">
+                            <i class="fas fa-users"></i>
+                            <span>Quản lý người dùng</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a th:href="@{/admin/staffs}">
+                            <i class="fas fa-users me-3"></i>
+                            <span>Quản lý nhân viên</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="menu-header">HỆ THỐNG</div>
+                <ul>
+                    <li class="menu-item" th:classappend="${activeMenu} == 'stats_movie' ? ' active' : ''">
+                        <a th:href="@{/admin/stats/movies}">
+                            <i class="fas fa-film"></i>
+                            <span>Thống kê phim</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" th:classappend="${activeMenu} == 'stats_member' ? ' active' : ''">
+                        <a th:href="@{/admin/stats/members}">
+                            <i class="fas fa-users"></i>
+                            <span>Thống kê thành viên</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" th:classappend="${activeMenu} == 'stats_genre' ? ' active' : ''">
+                        <a th:href="@{/admin/stats/genres}">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Thống kê thể loại</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Quản lý khuyến mãi</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">
+                            <i class="fas fa-video"></i>
+                            <span>Quản lý phòng chiếu</span>
+                        </a>
+                    </li>
+                    <li class="menu-item has-submenu">
+                        <a href="#">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Thống kê & Báo cáo</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="page-title" th:text="${pageTitle} ?: 'Quản lý phim'">Quản lý phim</h1>
+                <div class="user-info">
+                    <span class="greeting">Xin chào,</span>
+                    <span class="username">longnvt</span>
+                    <span class="dropdown-arrow">▼</span>
+                    <div class="user-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-section">
+                <div th:replace="${content}"></div>
+            </section>
+        </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
 
 </html>
