@@ -28,7 +28,7 @@ public class StaffResponseDTO {
     private String gender;
 
     // QUAN TRỌNG NHẤT: ĐỂ HIỂN THỊ ẢNH ĐẠI DIỆN
-    private String avatarUrl; // VD: "/uploads/avatars/admin-123e4567.jpg"
+    private String avatarUrl;
 
     private Integer roleId;
     private String roleName;

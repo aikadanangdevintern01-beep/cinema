@@ -52,6 +52,6 @@ public class StaffRequestDTO {
 
     // QUAN TRỌNG: File upload – KHÔNG BAO GIỜ ĐƯỢC ĐÁNH DẤU @NotNull
     // Vì khi sửa mà không chọn ảnh mới → file = null → lỗi validation!
-    // private MultipartFile avatarFile; // nullable, chỉ có khi người dùng chọn ảnh
+    private MultipartFile avatarFile; // nullable, chỉ có khi người dùng chọn ảnh
     // mới
 }

@@ -26,6 +26,7 @@ public class StaffService implements IStaffService {
     private final StaffRepository staffRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileUploadService fileUploadService;
 
     // TẠO MỚI NHÂN VIÊN
     @Override
@@ -84,6 +85,18 @@ public class StaffService implements IStaffService {
         staff.setAddress(dto.getAddress());
         staff.setBirthDate(dto.getBirthDate());
         staff.setGender(dto.getGender());
+
+        // XÓA ẢNH CŨ NẾU CÓ ẢNH MỚI
+        if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().equals(staff.getAvatarUrl())) {
+            fileUploadService.deleteOldAvatar(staff.getAvatarUrl());
+            staff.setAvatarUrl(dto.getAvatarUrl());
+        }
+
+        // XÓA ẢNH CŨ NẾU CÓ ẢNH MỚI
+        if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().equals(staff.getAvatarUrl())) {
+            fileUploadService.deleteOldAvatar(staff.getAvatarUrl());
+            staff.setAvatarUrl(dto.getAvatarUrl());
+        }
 
         // CẬP NHẬT ẢNH ĐẠI DIỆN NẾU CÓ MỚI
         if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().trim().isEmpty()) {

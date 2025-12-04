@@ -39,7 +39,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.security:spring-security-test'   
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+
 }
 
 // PHẦN NÀY ĐÃ SỬA HOÀN HẢO – KHÔNG CÒN LỖI DÒNG 61
