@@ -1,0 +1,1 @@
+SELECT * FROM cinema_md5_addentity.staffs;
