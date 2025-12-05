@@ -65,27 +65,36 @@ public class StaffRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // 4. CẬP NHẬT + UPLOAD ẢNH + XÓA ẢNH CŨ – HOÀN HẢO NHẤT 2025
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<StaffResponseDTO> update(
-            @PathVariable(name = "id") Integer id, // RÕ RÀNG, ĐẦY ĐỦ
+            @PathVariable(name = "id") Integer id,
             @Valid @RequestPart(name = "staff") StaffRequestDTO dto,
             @RequestPart(name = "avatarFile", required = false) MultipartFile avatarFile) {
 
-        dto.setId(id); // Gán ID rõ ràng
+        dto.setId(id); // 1. Đảm bảo ID trong DTO đúng với PathVariable
 
-        // XỬ LÝ ẢNH MỚI + XÓA ẢNH CŨ
+        // 2. Lấy thông tin nhân viên cũ từ DB để đối chiếu
+        StaffResponseDTO oldStaff = staffService.getStaffById(id);
+
+        // 3. XỬ LÝ LOGIC ẢNH
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            // Lấy ảnh cũ để xóa
-            StaffResponseDTO oldStaff = staffService.getStaffById(id);
-            fileUploadService.deleteOldAvatar(oldStaff.getAvatarUrl());
+            // CASE A: Có upload ảnh mới
+
+            // Xóa ảnh cũ trên server/cloud nếu có
+            if (oldStaff.getAvatarUrl() != null && !oldStaff.getAvatarUrl().isEmpty()) {
+                fileUploadService.deleteOldAvatar(oldStaff.getAvatarUrl());
+            }
 
             // Upload ảnh mới
             String avatarUrl = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
             dto.setAvatarUrl(avatarUrl);
+        } else {
+            // CASE B: Không upload ảnh mới -> Giữ nguyên ảnh cũ
+            // Cực kỳ quan trọng: Gán lại URL cũ vào DTO để không bị null hóa
+            dto.setAvatarUrl(oldStaff.getAvatarUrl());
         }
-        // Không có file mới → giữ nguyên avatarUrl cũ
 
+        // 4. Gọi Service cập nhật
         StaffResponseDTO updated = staffService.updateStaff(id, dto);
         return ResponseEntity.ok(updated);
     }

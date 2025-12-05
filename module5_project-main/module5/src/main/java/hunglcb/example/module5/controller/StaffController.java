@@ -62,7 +62,7 @@ public class StaffController {
         }
         model.addAttribute("isEdit", false);
         model.addAttribute("pageTitle", "Thêm nhân viên mới");
-        return "admin/staff/form";
+        return "admin/staff/add";
     }
 
     // ==================== CHỈNH SỬA – TRUYỀN ĐẦY ĐỦ ID ====================
@@ -82,7 +82,7 @@ public class StaffController {
             model.addAttribute("isEdit", true);
             model.addAttribute("pageTitle", "Chỉnh sửa nhân viên");
 
-            return "admin/staff/form";
+            return "admin/staff/edit";
 
         } catch (Exception e) {
             redirect.addFlashAttribute("error", "Không tìm thấy nhân viên với ID: " + id);
@@ -92,53 +92,94 @@ public class StaffController {
 
     // ==================== LƯU HOẶC CẬP NHẬT – TRUYỀN ĐẦY ĐỦ TẤT CẢ THAM SỐ
     // ====================
-    @PostMapping({ "/save", "/save/{id}" })
-    public String saveOrUpdate(
-            @PathVariable(name = "id", required = false) Integer id, // RÕ RÀNG, ĐẦY ĐỦ, KHÔNG THIỂU
+    // THÊM MỚI – không có id
+    @PostMapping("/save")
+    public String save(
             @Valid @ModelAttribute("staff") StaffRequestDTO dto,
             BindingResult result,
             @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
-            Model model) {
+            Model model,
+            RedirectAttributes redirect) {
 
-        // Gán ID rõ ràng – không thể thiếu
-        dto.setId(id);
+        // Không cần setId vì thêm mới → id = null
 
-        // Validation lỗi → trả về form ngay lập tức
         if (result.hasErrors()) {
             model.addAttribute("staff", dto);
-            model.addAttribute("isEdit", id != null);
-            model.addAttribute("pageTitle", id != null ? "Chỉnh sửa nhân viên" : "Thêm nhân viên mới");
-            return "admin/staff/form";
+            model.addAttribute("isEdit", false);
+            model.addAttribute("pageTitle", "Thêm nhân viên mới");
+            return "admin/staff/add";
         }
 
         try {
-            // XỬ LÝ ẢNH – ĐẦY ĐỦ, KHÔNG THIỂU BƯỚC NÀO
             if (avatarFile != null && !avatarFile.isEmpty()) {
-                // Nếu đang sửa → xóa ảnh cũ trước
-                if (id != null) {
-                    StaffResponseDTO oldStaff = staffService.getStaffById(id);
-                    fileUploadService.deleteOldAvatar(oldStaff.getAvatarUrl());
-                }
-
                 String avatarUrl = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
                 dto.setAvatarUrl(avatarUrl);
             }
 
-            // Lưu hoặc cập nhật – rõ ràng
-            if (id == null) {
-                staffService.createStaff(dto);
+            staffService.createStaff(dto);
+            redirect.addFlashAttribute("success", "Thêm nhân viên thành công!");
+            return "redirect:/admin/staffs"; // quay lại danh sách
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Lỗi: " + e.getMessage());
+            model.addAttribute("staff", dto);
+            return "admin/staff/add";
+        }
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(
+            @PathVariable("id") Integer id,
+            @Valid @ModelAttribute("staff") StaffRequestDTO dto,
+            BindingResult result,
+            @RequestParam(name = "avatarFile", required = false) MultipartFile avatarFile,
+            Model model,
+            RedirectAttributes redirect) {
+
+        dto.setId(id); // 1. Gán ID để Service biết là update
+
+        // 2. Nếu validate form thất bại
+        if (result.hasErrors()) {
+            model.addAttribute("staff", dto);
+            model.addAttribute("isEdit", true);
+            model.addAttribute("pageTitle", "Chỉnh sửa nhân viên");
+            return "admin/staff/edit";
+        }
+
+        try {
+            // 3. Lấy thông tin cũ từ DB để tham chiếu
+            StaffResponseDTO oldStaff = staffService.getStaffById(id);
+
+            // 4. XỬ LÝ ẢNH (LOGIC QUAN TRỌNG)
+            if (avatarFile != null && !avatarFile.isEmpty()) {
+                // TH1: Người dùng CÓ upload ảnh mới
+
+                // Xóa ảnh cũ nếu tồn tại
+                if (oldStaff.getAvatarUrl() != null && !oldStaff.getAvatarUrl().isEmpty()) {
+                    fileUploadService.deleteOldAvatar(oldStaff.getAvatarUrl());
+                }
+
+                // Upload ảnh mới
+                String avatarUrl = fileUploadService.uploadAvatar(avatarFile, dto.getUsername());
+                dto.setAvatarUrl(avatarUrl);
             } else {
-                staffService.updateStaff(id, dto);
+                // TH2: Người dùng KHÔNG upload ảnh mới -> Giữ nguyên ảnh cũ
+                // Dòng này rất quan trọng, nếu thiếu -> Mất ảnh
+                dto.setAvatarUrl(oldStaff.getAvatarUrl());
             }
 
+            // 5. Gọi Service lưu thông tin
+            staffService.updateStaff(id, dto);
+
+            redirect.addFlashAttribute("success", "Cập nhật nhân viên thành công!");
             return "redirect:/admin/staffs";
 
         } catch (Exception e) {
-            model.addAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            e.printStackTrace(); // In lỗi ra console để debug nếu cần
+            model.addAttribute("error", "Lỗi: " + e.getMessage());
             model.addAttribute("staff", dto);
-            model.addAttribute("isEdit", id != null);
-            model.addAttribute("pageTitle", id != null ? "Chỉnh sửa nhân viên" : "Thêm nhân viên mới");
-            return "admin/staff/form";
+            model.addAttribute("isEdit", true); // Giữ trạng thái edit để form hiển thị đúng
+            return "admin/staff/edit";
         }
     }
 
